@@ -1,0 +1,1406 @@
+{
+  "connectors": [
+    {
+      "id": "conn_card_scanner_01",
+      "name": "Card Scanner",
+      "slug": "card-scanner",
+      "description": "Extracts contact name, company, designation, phone, email, and website from business card images using AI vision.",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "You are an intelligent business card OCR and contact extraction system. Given an image of a business card (and optional notes), accurately extract the person's full name, company name, professional designation/job title, phone number, email address, and website URL. Return strictly a JSON object conforming to the required schema. If any field is not visible on the card, return null for that field.",
+      "temperature": 0.2,
+      "maxTokens": 1024,
+      "status": "active",
+      "createdAt": "2026-09-20T06:57:14.369Z",
+      "updatedAt": "2026-09-27T06:57:14.369Z"
+    },
+    {
+      "id": "conn_article_writer_02",
+      "name": "Article Writer",
+      "slug": "article-writer",
+      "description": "Generates structured articles, executive summaries, and SEO keywords based on topic, target word count, and style options.",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "You are an elite editorial content writer and SEO copywriter. Based on the provided topic, SEO keywords, target word count, and optional stylistic instructions, write an engaging, high-quality, comprehensive article with an executive summary, markdown-formatted body, and SEO keyword list. Return ONLY a valid JSON object matching the required schema.",
+      "temperature": 0.7,
+      "maxTokens": 2500,
+      "status": "active",
+      "createdAt": "2026-09-21T06:57:14.369Z",
+      "updatedAt": "2026-09-27T06:57:14.369Z"
+    },
+    {
+      "id": "6fbe2fdd-5d0e-48b3-a80a-b8bbb8d3dbdb",
+      "name": "Test Summarizer",
+      "slug": "test-article-1790492234569",
+      "description": "Test summarization pipeline",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "Summarize the input text concisely.",
+      "temperature": 0.3,
+      "maxTokens": 500,
+      "status": "active",
+      "createdAt": "2026-09-27T06:57:14.570Z",
+      "updatedAt": "2026-09-27T06:57:14.570Z"
+    },
+    {
+      "id": "77941b3e-44a3-4e00-9e92-6a29a71ae402",
+      "name": "Test Summarizer",
+      "slug": "test-article-1790492259383",
+      "description": "Test summarization pipeline",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "Summarize the input text concisely.",
+      "temperature": 0.3,
+      "maxTokens": 500,
+      "status": "active",
+      "createdAt": "2026-09-27T06:57:39.384Z",
+      "updatedAt": "2026-09-27T06:57:39.384Z"
+    },
+    {
+      "id": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "name": "Test Summarizer",
+      "slug": "test-article-1790492331067",
+      "description": "Test summarization pipeline",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "Summarize the input text concisely.",
+      "temperature": 0.3,
+      "maxTokens": 500,
+      "status": "active",
+      "createdAt": "2026-09-27T06:58:51.067Z",
+      "updatedAt": "2026-09-27T06:58:51.067Z"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "inp_cs_01",
+      "connectorId": "conn_card_scanner_01",
+      "name": "image",
+      "label": "Business Card Image",
+      "type": "IMAGE",
+      "required": true,
+      "description": "High-resolution photo or scan of the business card (JPEG, PNG, WEBP).",
+      "orderIndex": 0,
+      "validationRules": {
+        "allowedMimeTypes": [
+          "image/jpeg",
+          "image/png",
+          "image/webp"
+        ],
+        "maxFileSizeMb": 10
+      }
+    },
+    {
+      "id": "inp_cs_02",
+      "connectorId": "conn_card_scanner_01",
+      "name": "notes",
+      "label": "Context Notes",
+      "type": "TEXT",
+      "required": false,
+      "description": "Optional additional context or hints (e.g. \"Met at SaaStr 2026\").",
+      "orderIndex": 1
+    },
+    {
+      "id": "inp_aw_01",
+      "connectorId": "conn_article_writer_02",
+      "name": "topic",
+      "label": "Article Topic",
+      "type": "TEXT",
+      "required": true,
+      "description": "The core topic or title theme of the article.",
+      "defaultValue": "The Future of AI-Powered Microservices and Automated API Gateways",
+      "orderIndex": 0
+    },
+    {
+      "id": "inp_aw_02",
+      "connectorId": "conn_article_writer_02",
+      "name": "keywords",
+      "label": "Target SEO Keywords",
+      "type": "TEXT",
+      "required": false,
+      "description": "Comma-separated target keywords to organically weave into the content.",
+      "defaultValue": "AI gateway, microservices, developer productivity, schema validation",
+      "orderIndex": 1
+    },
+    {
+      "id": "inp_aw_03",
+      "connectorId": "conn_article_writer_02",
+      "name": "word_count",
+      "label": "Target Word Count",
+      "type": "NUMBER",
+      "required": false,
+      "defaultValue": 800,
+      "description": "Approximate target length for the generated article.",
+      "orderIndex": 2,
+      "validationRules": {
+        "min": 150,
+        "max": 3000
+      }
+    },
+    {
+      "id": "inp_aw_04",
+      "connectorId": "conn_article_writer_02",
+      "name": "options",
+      "label": "Style & Format Options",
+      "type": "JSON",
+      "required": false,
+      "description": "JSON object specifying tone, audience, or specific sections.",
+      "defaultValue": "{\n  \"tone\": \"authoritative\",\n  \"audience\": \"software architects\"\n}",
+      "orderIndex": 3
+    },
+    {
+      "id": "4739b740-4703-4efd-8299-c3d42e7caad0",
+      "connectorId": "6fbe2fdd-5d0e-48b3-a80a-b8bbb8d3dbdb",
+      "name": "text",
+      "label": "Input Text",
+      "type": "TEXT",
+      "required": true,
+      "orderIndex": 0
+    },
+    {
+      "id": "8595c221-b290-4e75-b56b-d08ad0b4dedc",
+      "connectorId": "77941b3e-44a3-4e00-9e92-6a29a71ae402",
+      "name": "text",
+      "label": "Input Text",
+      "type": "TEXT",
+      "required": true,
+      "orderIndex": 0
+    },
+    {
+      "id": "9c9f93a9-3c39-4677-8089-d5ab48ca30ff",
+      "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "name": "text",
+      "label": "Input Text",
+      "type": "TEXT",
+      "required": true,
+      "orderIndex": 0
+    }
+  ],
+  "outputSchemas": [
+    {
+      "id": "schema_cs_01",
+      "connectorId": "conn_card_scanner_01",
+      "rawSchemaJson": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"name\": {\n      \"type\": \"string\",\n      \"description\": \"Full name of the contact\"\n    },\n    \"company\": {\n      \"type\": \"string\",\n      \"description\": \"Company or organization name\"\n    },\n    \"designation\": {\n      \"type\": \"string\",\n      \"description\": \"Job title or role\"\n    },\n    \"phone\": {\n      \"type\": \"string\",\n      \"description\": \"Primary telephone or mobile number\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"description\": \"Direct or business email address\"\n    },\n    \"website\": {\n      \"type\": \"string\",\n      \"description\": \"Website URL\"\n    }\n  },\n  \"required\": [\n    \"name\"\n  ]\n}",
+      "description": "Standard business card contact record."
+    },
+    {
+      "id": "schema_aw_01",
+      "connectorId": "conn_article_writer_02",
+      "rawSchemaJson": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"title\": {\n      \"type\": \"string\",\n      \"description\": \"Engaging title for the article\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"2-3 sentence executive synopsis\"\n    },\n    \"article\": {\n      \"type\": \"string\",\n      \"description\": \"Full markdown article content\"\n    },\n    \"keywords\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"List of relevant keywords extracted or covered\"\n    }\n  },\n  \"required\": [\n    \"title\",\n    \"summary\",\n    \"article\",\n    \"keywords\"\n  ]\n}",
+      "description": "Structured publication article with SEO metadata."
+    },
+    {
+      "id": "f407b27a-1a50-4c5b-b5d7-c731d7e43b77",
+      "connectorId": "6fbe2fdd-5d0e-48b3-a80a-b8bbb8d3dbdb",
+      "rawSchemaJson": "{\"type\":\"object\",\"properties\":{\"summary\":{\"type\":\"string\"}},\"required\":[\"summary\"]}"
+    },
+    {
+      "id": "a8067c4d-623a-4847-a6fe-ad5f72ae47a0",
+      "connectorId": "77941b3e-44a3-4e00-9e92-6a29a71ae402",
+      "rawSchemaJson": "{\"type\":\"object\",\"properties\":{\"summary\":{\"type\":\"string\"}},\"required\":[\"summary\"]}"
+    },
+    {
+      "id": "d60bcad9-141e-4d29-995e-ca399b08a670",
+      "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "rawSchemaJson": "{\"type\":\"object\",\"properties\":{\"summary\":{\"type\":\"string\"}},\"required\":[\"summary\"]}"
+    }
+  ],
+  "apiKeys": [
+    {
+      "id": "key_cs_01",
+      "connectorId": "conn_card_scanner_01",
+      "keyPrefix": "aic_live_dem",
+      "keyHash": "3456bf5251bcb29d740a3ca4e194155de74606848c97860e24f6aae60e74a531",
+      "hint": "...key_88",
+      "name": "Default Demo Key (Preconfigured)",
+      "createdAt": "2026-09-20T06:57:14.369Z",
+      "isRevoked": false,
+      "lastUsedAt": "2026-09-27T06:58:28.437Z"
+    },
+    {
+      "id": "key_aw_01",
+      "connectorId": "conn_article_writer_02",
+      "keyPrefix": "aic_live_dem",
+      "keyHash": "d7076a05187ffd737da5bf171b3b18a454a853f0e7077f2321242ed74a04fc77",
+      "hint": "...key_99",
+      "name": "Default Demo Key (Preconfigured)",
+      "createdAt": "2026-09-21T06:57:14.369Z",
+      "isRevoked": false,
+      "lastUsedAt": "2026-09-27T06:58:19.169Z"
+    },
+    {
+      "id": "dd2ab6da-e75a-43fb-bcfa-ac9d8e8cf74f",
+      "connectorId": "6fbe2fdd-5d0e-48b3-a80a-b8bbb8d3dbdb",
+      "keyPrefix": "aic_live_0a7",
+      "keyHash": "c9f31785675dffad8d4aa4475b26332b4fb8125d89ec9bf7236fa367c5f7d5bb",
+      "hint": "...a7468c",
+      "name": "Default Production Key",
+      "createdAt": "2026-09-27T06:57:14.570Z",
+      "isRevoked": false
+    },
+    {
+      "id": "b9bb1fb2-e8c9-4a7e-87d1-32a6dc71696d",
+      "connectorId": "conn_card_scanner_01",
+      "keyPrefix": "aic_live_9f8",
+      "keyHash": "529a2a59313dc11a98bf9bc8edd2a1d9f9030d668d362b941a4f61cb7b0649bd",
+      "hint": "...23f82d",
+      "name": "Integration Test Key",
+      "createdAt": "2026-09-27T06:57:14.572Z",
+      "isRevoked": true,
+      "lastUsedAt": "2026-09-27T06:57:14.573Z"
+    },
+    {
+      "id": "0b6e72fc-9ad0-483d-bfbb-9a77a73eb0e1",
+      "connectorId": "77941b3e-44a3-4e00-9e92-6a29a71ae402",
+      "keyPrefix": "aic_live_ac2",
+      "keyHash": "e0c4866781509c0bd07221b7e64215f70707d1f45079c4dcdd00ff8bb58d7a77",
+      "hint": "...2f7ab8",
+      "name": "Default Production Key",
+      "createdAt": "2026-09-27T06:57:39.384Z",
+      "isRevoked": false
+    },
+    {
+      "id": "33f198e0-06c6-48cf-a84b-975c972fba4f",
+      "connectorId": "conn_card_scanner_01",
+      "keyPrefix": "aic_live_290",
+      "keyHash": "0060bdc794a47ac7a113fa20a04f96110c7b1d2d31d1b668739d63b8e187465b",
+      "hint": "...d85f33",
+      "name": "Integration Test Key",
+      "createdAt": "2026-09-27T06:57:39.391Z",
+      "isRevoked": true,
+      "lastUsedAt": "2026-09-27T06:57:39.392Z"
+    },
+    {
+      "id": "d3c3e367-6af0-4b5f-9db0-35dc6d26ea2e",
+      "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "keyPrefix": "aic_live_33a",
+      "keyHash": "bd379a4b31afa09815ef5228eb7407da3b2012a2278c0371ce727363f2bac6c7",
+      "hint": "...47c2ca",
+      "name": "Default Production Key",
+      "createdAt": "2026-09-27T06:58:51.067Z",
+      "isRevoked": false
+    },
+    {
+      "id": "11b605ac-e0d0-44c5-81c2-e078d34de570",
+      "connectorId": "conn_card_scanner_01",
+      "keyPrefix": "aic_live_f79",
+      "keyHash": "19bf5fe0b9250130a076ae30602f55a3e49c73ef5c0b7bd81b22beed2704a327",
+      "hint": "...cb43da",
+      "name": "Integration Test Key",
+      "createdAt": "2026-09-27T06:58:51.070Z",
+      "isRevoked": true,
+      "lastUsedAt": "2026-09-27T06:58:51.074Z"
+    }
+  ],
+  "logs": [
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 340,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 120,
+      "outputTokens": 60,
+      "totalTokens": 180,
+      "estimatedCost": 0.00005,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST"
+      },
+      "id": "3b65b265-89cb-489e-a938-727a46dfa86d",
+      "timestamp": "2026-09-27T06:58:51.081Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 400,
+      "success": false,
+      "responseTimeMs": 1,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "estimatedCost": 0,
+      "errorType": "VALIDATION_ERROR",
+      "errorMessage": "image: Field \"image\" is required. Please upload a file or provide a base64 string.",
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "curl/7.88.1",
+        "inputKeys": [],
+        "fileCounts": 0
+      },
+      "id": "99c2e187-d7be-4433-b716-5eba07b3f50f",
+      "timestamp": "2026-09-27T06:58:28.438Z"
+    },
+    {
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "status": 502,
+      "success": false,
+      "responseTimeMs": 3342,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "estimatedCost": 0,
+      "errorType": "PROVIDER_ERROR",
+      "errorMessage": "[GeminiProvider Error] {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "curl/7.88.1",
+        "inputKeys": [
+          "topic",
+          "keywords",
+          "word_count",
+          "options"
+        ]
+      },
+      "id": "b6b75a60-9cf6-41fb-af54-f055ed6efb8f",
+      "timestamp": "2026-09-27T06:58:22.511Z"
+    },
+    {
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "status": 401,
+      "success": false,
+      "responseTimeMs": 0,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "estimatedCost": 0,
+      "errorType": "INVALID_API_KEY",
+      "errorMessage": "The provided API key is invalid, revoked, or not authorized for this connector.",
+      "id": "57715883-e796-4d2c-abd7-e9a59e5ae45b",
+      "timestamp": "2026-09-27T06:58:12.996Z"
+    },
+    {
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 9073,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 388,
+      "outputTokens": 388,
+      "totalTokens": 1807,
+      "estimatedCost": 0.00015,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "curl/7.88.1",
+        "inputKeys": [
+          "topic",
+          "keywords",
+          "word_count",
+          "options"
+        ],
+        "fileCounts": 0
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Architecting Autonomous AI Microservices: The Next Evolution in Distributed Systems\",\"summary\":\"As distributed systems scale, incorporating non-deterministic intelligence requires rigorous a",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      },
+      "id": "072e2518-7f5d-4dd4-96eb-cab35c4236c4",
+      "timestamp": "2026-09-27T06:58:02.692Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 340,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 120,
+      "outputTokens": 60,
+      "totalTokens": 180,
+      "estimatedCost": 0.00005,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST"
+      },
+      "id": "3de8776e-fb0f-48c3-86b7-bd8ac7866693",
+      "timestamp": "2026-09-27T06:57:39.397Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 340,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 120,
+      "outputTokens": 60,
+      "totalTokens": 180,
+      "estimatedCost": 0.00005,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST"
+      },
+      "id": "b46bcc5c-2770-46e8-a0bc-04f94e17ec6c",
+      "timestamp": "2026-09-27T06:57:14.578Z"
+    },
+    {
+      "id": "log_seed_0",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-22T11:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1049,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_1",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-23T04:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1965,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_2",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-25T08:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1322,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_3",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-25T19:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1540,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_4",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-26T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1105,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_5",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-25T16:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1751,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_6",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-23T13:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1391,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_7",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-25T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1298,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_8",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-26T07:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1447,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_9",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-25T23:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1801,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_10",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-25T02:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1255,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_11",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-22T16:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1242,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_12",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-24T19:57:14.369Z",
+      "status": 400,
+      "success": false,
+      "responseTimeMs": 1104,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0,
+      "errorType": "VALIDATION_ERROR",
+      "errorMessage": "Missing required input field \"image\"",
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_13",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-22T17:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1378,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_14",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-25T03:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1393,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_15",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-23T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1830,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_16",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-22T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1050,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_17",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-22T15:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1342,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_18",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-24T22:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1142,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_19",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-22T09:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1848,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_20",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-26T02:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1090,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_21",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-25T01:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1135,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_22",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-23T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1318,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_23",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-27T02:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1862,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_24",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-26T05:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 887,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_25",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-24T19:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1648,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_26",
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "timestamp": "2026-09-24T10:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 904,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 820,
+      "outputTokens": 140,
+      "totalTokens": 960,
+      "estimatedCost": 0.00020699999999999996,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "image"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale\",\"designation\":\"VP Eng\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "log_seed_27",
+      "connectorId": "conn_article_writer_02",
+      "connectorName": "Article Writer",
+      "timestamp": "2026-09-23T19:57:14.369Z",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 1275,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 340,
+      "outputTokens": 890,
+      "totalTokens": 1230,
+      "estimatedCost": 0.000585,
+      "requestMetadata": {
+        "endpoint": "/api/article-writer",
+        "method": "POST",
+        "clientIp": "127.0.0.1",
+        "userAgent": "curl/8.5.0",
+        "inputKeys": [
+          "topic",
+          "keywords"
+        ]
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"title\":\"Microservices in 2026\",\"summary\":\"...\"}",
+        "keysExtracted": [
+          "title",
+          "summary",
+          "article",
+          "keywords"
+        ]
+      }
+    }
+  ]
+}

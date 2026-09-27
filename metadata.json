@@ -1,0 +1,8 @@
+{
+  "name": "Universal AI API Connector & API Hub",
+  "description": "Production platform to create, configure, test, document, and manage reusable AI-powered API endpoints across multiple providers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

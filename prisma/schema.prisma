@@ -1,0 +1,128 @@
+// Prisma Schema for Universal AI API Connector & API Hub
+// Defines relational models for Connectors, Inputs, Output Schemas, ApiKeys, and Request Logs
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ConnectorStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum InputType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  IMAGE
+  FILE
+  JSON
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Connector {
+  id                String                 @id @default(uuid())
+  name              String
+  slug              String                 @unique
+  description       String
+  provider          String                 // "gemini", "openai"
+  model             String
+  systemPrompt      String
+  temperature       Float                  @default(0.7)
+  maxTokens         Int                    @default(2048)
+  status            ConnectorStatus        @default(ACTIVE)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+
+  inputs            ConnectorInput[]
+  outputSchema      ConnectorOutputSchema?
+  apiKeys           ApiKey[]
+  requestLogs       ApiRequestLog[]
+
+  @@index([slug])
+  @@index([provider])
+  @@index([status])
+}
+
+model ConnectorInput {
+  id              String      @id @default(uuid())
+  connectorId     String
+  name            String      // e.g. "topic", "image"
+  label           String      // e.g. "Topic of Article"
+  type            InputType   // TEXT, NUMBER, BOOLEAN, IMAGE, FILE, JSON
+  required        Boolean     @default(true)
+  description     String?
+  defaultValue    String?
+  validationRules String?     // Stored JSON configuration for min, max, allowedTypes, etc.
+  orderIndex      Int         @default(0)
+
+  connector       Connector   @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+
+  @@unique([connectorId, name])
+  @@index([connectorId])
+}
+
+model ConnectorOutputSchema {
+  id              String      @id @default(uuid())
+  connectorId     String      @unique
+  rawSchemaJson   String      // The full JSON Schema specification
+  parsedSchema    String      // Normalized representation
+  description     String?
+
+  connector       Connector   @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+}
+
+model ApiKey {
+  id              String      @id @default(uuid())
+  connectorId     String
+  keyPrefix       String      // e.g. "aic_live_abc12"
+  keyHash         String      // SHA-256 hashed secret
+  hint            String      // Display hint like "...9xyz"
+  name            String      @default("Default Key")
+  createdAt       DateTime    @default(now())
+  lastUsedAt      DateTime?
+  isRevoked       Boolean     @default(false)
+
+  connector       Connector   @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+
+  @@index([keyHash])
+  @@index([connectorId])
+}
+
+model ApiRequestLog {
+  id              String      @id @default(uuid())
+  connectorId     String
+  timestamp       DateTime    @default(now())
+  status          Int         // HTTP status code (200, 400, 500, etc.)
+  success         Boolean
+  responseTimeMs  Int         // Execution latency in milliseconds
+  provider        String
+  model           String
+  inputTokens     Int         @default(0)
+  outputTokens    Int         @default(0)
+  totalTokens     Int         @default(0)
+  estimatedCost   Float       @default(0.0)
+  errorType       String?     // VALIDATION_ERROR, PROVIDER_ERROR, TIMEOUT, etc.
+  errorMessage    String?
+  requestMetadata String?     // JSON string of inputs/headers (sanitized)
+  responseMetadata String?    // JSON string of output summary
+
+  connector       Connector   @relation(fields: [connectorId], references: [id], onDelete: Cascade)
+
+  @@index([connectorId])
+  @@index([timestamp])
+  @@index([success])
+}
