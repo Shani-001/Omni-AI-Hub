@@ -69,6 +69,34 @@
       "status": "active",
       "createdAt": "2026-09-27T06:58:51.067Z",
       "updatedAt": "2026-09-27T06:58:51.067Z"
+    },
+    {
+      "id": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "name": "Customer Feedback Classifier",
+      "slug": "customer-feedback-classifier",
+      "description": "",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "YOU ARE A EXPERT WHICH TAKE THE FEEDBACK AND GENERATE THE JSON OF THAT IN WHICH INCLUDE ALL THE DETAILS OF THAT FEEDBACK",
+      "temperature": 0.7,
+      "maxTokens": 2000,
+      "status": "active",
+      "createdAt": "2026-09-27T07:23:44.964Z",
+      "updatedAt": "2026-09-27T07:23:44.964Z"
+    },
+    {
+      "id": "71117a9e-599e-4530-8c87-000095bb64e7",
+      "name": "Test Summarizer",
+      "slug": "test-article-1790495196547",
+      "description": "Test summarization pipeline",
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "systemPrompt": "Summarize the input text concisely.",
+      "temperature": 0.3,
+      "maxTokens": 500,
+      "status": "active",
+      "createdAt": "2026-09-27T07:46:36.547Z",
+      "updatedAt": "2026-09-27T07:46:36.547Z"
     }
   ],
   "inputs": [
@@ -174,6 +202,48 @@
       "type": "TEXT",
       "required": true,
       "orderIndex": 0
+    },
+    {
+      "id": "3aa6741a-48bd-480a-a358-cc7899507596",
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "name": "sentiments",
+      "label": "Input Text",
+      "type": "TEXT",
+      "required": true,
+      "description": "Primary text input to process",
+      "defaultValue": "",
+      "orderIndex": 0
+    },
+    {
+      "id": "439d8c5c-2010-4c10-83dd-810c74163ed6",
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "name": "urgency",
+      "label": "Field 2",
+      "type": "NUMBER",
+      "required": true,
+      "description": "",
+      "defaultValue": "",
+      "orderIndex": 1
+    },
+    {
+      "id": "265338a1-104f-4e0c-b568-c3478f720a8c",
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "name": "summary",
+      "label": "Field 3",
+      "type": "TEXT",
+      "required": true,
+      "description": "",
+      "defaultValue": "",
+      "orderIndex": 2
+    },
+    {
+      "id": "0ee66718-5720-4072-8517-96f080572e6a",
+      "connectorId": "71117a9e-599e-4530-8c87-000095bb64e7",
+      "name": "text",
+      "label": "Input Text",
+      "type": "TEXT",
+      "required": true,
+      "orderIndex": 0
     }
   ],
   "outputSchemas": [
@@ -202,6 +272,17 @@
     {
       "id": "d60bcad9-141e-4d29-995e-ca399b08a670",
       "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "rawSchemaJson": "{\"type\":\"object\",\"properties\":{\"summary\":{\"type\":\"string\"}},\"required\":[\"summary\"]}"
+    },
+    {
+      "id": "5e72453a-092b-4831-bca7-e4c94f168e20",
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "rawSchemaJson": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"result\": {\n      \"type\": \"string\",\n      \"description\": \"Extracted or generated outcome\"\n    },\n    \"confidence\": {\n      \"type\": \"number\",\n      \"description\": \"Confidence score from 0 to 1\"\n    }\n  },\n  \"required\": [\n    \"result\"\n  ]\n}",
+      "description": "Standard JSON response schema"
+    },
+    {
+      "id": "d13c9678-5d0f-429d-b6ed-88abb77d92f4",
+      "connectorId": "71117a9e-599e-4530-8c87-000095bb64e7",
       "rawSchemaJson": "{\"type\":\"object\",\"properties\":{\"summary\":{\"type\":\"string\"}},\"required\":[\"summary\"]}"
     }
   ],
@@ -290,9 +371,232 @@
       "createdAt": "2026-09-27T06:58:51.070Z",
       "isRevoked": true,
       "lastUsedAt": "2026-09-27T06:58:51.074Z"
+    },
+    {
+      "id": "efbc43f7-802f-49c7-8785-d74aca6b473f",
+      "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "keyPrefix": "aic_live_978",
+      "keyHash": "1811080d5e09a67093e05e37b501c53f85079f50f12da866fc300b1539c2589a",
+      "hint": "...dd7db7",
+      "name": "Key 2",
+      "createdAt": "2026-09-27T07:11:33.610Z",
+      "isRevoked": false
+    },
+    {
+      "id": "12032667-7ba2-4244-bc67-d27484f34141",
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "keyPrefix": "aic_live_f90",
+      "keyHash": "622ab6c6790b97a9e6b6d70bb5545c0658687970ecced5f9f52a1e1a06658e1e",
+      "hint": "...2fa651",
+      "name": "Default Production Key",
+      "createdAt": "2026-09-27T07:23:44.964Z",
+      "isRevoked": false
+    },
+    {
+      "id": "ca79d100-f264-4984-8f6f-9e19976ce70b",
+      "connectorId": "71117a9e-599e-4530-8c87-000095bb64e7",
+      "keyPrefix": "aic_live_588",
+      "keyHash": "d0661bb73a991d889b7553ad23eed643c39395f41c729a24e1e77d27e26bdec7",
+      "hint": "...485c5f",
+      "name": "Default Production Key",
+      "createdAt": "2026-09-27T07:46:36.547Z",
+      "isRevoked": false
+    },
+    {
+      "id": "4b5770e6-a81a-4dbb-8435-8dc9cba18552",
+      "connectorId": "conn_card_scanner_01",
+      "keyPrefix": "aic_live_c2f",
+      "keyHash": "b1985f2b14bf043c62b44b39ff4355e594043823042b10e9faa2c5be2ca64534",
+      "hint": "...d0091a",
+      "name": "Integration Test Key",
+      "createdAt": "2026-09-27T07:46:36.553Z",
+      "isRevoked": true,
+      "lastUsedAt": "2026-09-27T07:46:36.554Z"
     }
   ],
   "logs": [
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 340,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 120,
+      "outputTokens": 60,
+      "totalTokens": 180,
+      "estimatedCost": 0.00005,
+      "requestMetadata": {
+        "endpoint": "/api/card-scanner",
+        "method": "POST"
+      },
+      "id": "46ef8fc6-bb84-49f0-a803-042964e15a76",
+      "timestamp": "2026-09-27T07:46:36.559Z"
+    },
+    {
+      "connectorId": "d7c4ebcb-9bd4-42ae-82f3-30420a1092ca",
+      "connectorName": "Customer Feedback Classifier",
+      "status": 502,
+      "success": false,
+      "responseTimeMs": 12199,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "estimatedCost": 0,
+      "errorType": "PROVIDER_ERROR",
+      "errorMessage": "[GeminiProvider Error] {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "requestMetadata": {
+        "endpoint": "/api/connectors/d7c4ebcb-9bd4-42ae-82f3-30420a1092ca/test",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "inputKeys": [
+          "sentiments",
+          "urgency",
+          "summary"
+        ]
+      },
+      "id": "6c857392-416b-4d6f-a32e-a5c6056df61b",
+      "timestamp": "2026-09-27T07:24:59.143Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 18969,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 1460,
+      "outputTokens": 81,
+      "totalTokens": 1809,
+      "estimatedCost": 0.00013,
+      "requestMetadata": {
+        "endpoint": "/api/connectors/conn_card_scanner_01/test",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "inputKeys": [
+          "image"
+        ],
+        "fileCounts": 1
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Marcus Mitchel\",\"company\":\"Realtors ABC\",\"designation\":\"Realtor® | Director of Growth\",\"phone\":\"(123) 456 - 7890\",\"email\":null,\"website\":\"www.yourwebsite.com\"}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email",
+          "website"
+        ]
+      },
+      "id": "bf08ef1b-9b58-4a74-bb04-35e47db55ac3",
+      "timestamp": "2026-09-27T07:18:59.521Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 15458,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 1446,
+      "outputTokens": 88,
+      "totalTokens": 1837,
+      "estimatedCost": 0.00013,
+      "requestMetadata": {
+        "endpoint": "/api/connectors/conn_card_scanner_01/test",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "inputKeys": [
+          "image"
+        ],
+        "fileCounts": 1
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":\"Sarah Jenkins\",\"company\":\"CloudScale Systems Inc.\",\"designation\":\"VP of Cloud Architecture & AI\",\"phone\":\"+1 (415) 555-0199\",\"email\":\"sarah.jenkins@cloudscale.io\",\"website\":\"https://cloudscal",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email",
+          "website"
+        ]
+      },
+      "id": "98e705bc-7d97-47b6-9f3a-d9636266c0c4",
+      "timestamp": "2026-09-27T07:17:15.420Z"
+    },
+    {
+      "connectorId": "56c26ea9-3f15-4f30-bbd1-c6d278865f50",
+      "connectorName": "Test Summarizer",
+      "status": 502,
+      "success": false,
+      "responseTimeMs": 13275,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "estimatedCost": 0,
+      "errorType": "PROVIDER_ERROR",
+      "errorMessage": "[GeminiProvider Error] {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+      "requestMetadata": {
+        "endpoint": "/api/connectors/56c26ea9-3f15-4f30-bbd1-c6d278865f50/test",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "inputKeys": [
+          "text"
+        ]
+      },
+      "id": "7f709d75-d688-418a-9fd8-58d9cd5a12d8",
+      "timestamp": "2026-09-27T07:12:30.679Z"
+    },
+    {
+      "connectorId": "conn_card_scanner_01",
+      "connectorName": "Card Scanner",
+      "status": 200,
+      "success": true,
+      "responseTimeMs": 13847,
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "inputTokens": 1484,
+      "outputTokens": 45,
+      "totalTokens": 2124,
+      "estimatedCost": 0.00012,
+      "requestMetadata": {
+        "endpoint": "/api/connectors/conn_card_scanner_01/test",
+        "method": "POST",
+        "clientIp": "::ffff:127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+        "inputKeys": [
+          "image",
+          "notes"
+        ],
+        "fileCounts": 1
+      },
+      "responseMetadata": {
+        "dataSnippet": "{\"name\":null,\"company\":null,\"designation\":null,\"phone\":null,\"email\":null,\"website\":null}",
+        "keysExtracted": [
+          "name",
+          "company",
+          "designation",
+          "phone",
+          "email",
+          "website"
+        ]
+      },
+      "id": "a2cdbaa6-25b6-4a6a-9c99-fb7846e2e606",
+      "timestamp": "2026-09-27T07:10:02.599Z"
+    },
     {
       "connectorId": "conn_card_scanner_01",
       "connectorName": "Card Scanner",
