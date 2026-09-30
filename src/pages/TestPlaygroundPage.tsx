@@ -44,6 +44,7 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
   // Playground Authentication key override
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [useAdminBypass, setUseAdminBypass] = useState(true);
+  const [selectedModel, setSelectedModel] = useState<string>('gemini-flash-latest');
 
   const { success, error, info } = useToast();
 
@@ -53,6 +54,9 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
         setLoading(true);
         const data = await api.getConnector(connectorId);
         setConnector(data);
+        if (data.model) {
+          setSelectedModel(data.model);
+        }
 
         // Pre-populate default values
         const defaults: Record<string, any> = {};
@@ -208,7 +212,8 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
       const res = await api.testConnector(
         connector.id,
         payload,
-        useAdminBypass ? undefined : apiKeyInput
+        useAdminBypass ? undefined : apiKeyInput,
+        selectedModel
       );
 
       setExecutionResult(res.data);
@@ -275,7 +280,7 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Form & Request Builder */}
         <div className="lg:col-span-6 space-y-6">
-          {/* Authentication Settings Panel */}
+          {/* Authentication & Model Settings Panel */}
           <div className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-zinc-200">Playground Authorization</span>
@@ -301,6 +306,31 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
                 />
               </div>
             )}
+
+            {/* Model Override Selector */}
+            <div className="pt-2 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span className="text-[11px] text-zinc-400 font-medium">Model Selection:</span>
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1 text-xs font-mono text-zinc-200 focus:outline-hidden focus:border-sky-500"
+              >
+                {connector.provider === 'gemini' ? (
+                  <>
+                    <option value="gemini-flash-latest">Gemini Flash Latest (Stable, Recommended)</option>
+                    <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite (Ultra-Fast)</option>
+                    <option value="gemini-3.8-flash">Gemini 3.8 Flash (Next-Gen)</option>
+                    <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview (Complex)</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="gpt-4o">GPT-4o</option>
+                    <option value="o3-mini">o3-mini</option>
+                  </>
+                )}
+              </select>
+            </div>
           </div>
 
           {/* Generated Input Parameters Form */}
@@ -493,7 +523,7 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
           {/* Response Viewer */}
           <div className="space-y-4">
             {executionError ? (
-              <div className="p-5 rounded-2xl border border-rose-500/40 bg-rose-950/20 space-y-2">
+              <div className="p-5 rounded-2xl border border-rose-500/40 bg-rose-950/20 space-y-3">
                 <div className="flex items-center gap-2 text-rose-400 font-bold text-xs">
                   <AlertCircle className="w-4 h-4" />
                   <span>{executionError.code}</span>
@@ -505,6 +535,38 @@ export function TestPlaygroundPage({ connectorId, onNavigate }: TestPlaygroundPa
                   <pre className="text-[11px] text-rose-300 font-mono pt-2 overflow-x-auto">
                     {JSON.stringify(executionError.details, null, 2)}
                   </pre>
+                )}
+                {(executionError.code === 'UPSTREAM_HIGH_DEMAND' ||
+                  executionError.message?.includes('503') ||
+                  executionError.message?.includes('high demand') ||
+                  executionError.message?.includes('UNAVAILABLE')) && (
+                  <div className="pt-3 border-t border-rose-900/50 space-y-2">
+                    <span className="text-[11px] text-zinc-300 font-medium block">
+                      Google's preview server is experiencing high traffic. Quick switch model:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedModel('gemini-flash-latest');
+                          setTimeout(() => handleExecute(), 50);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-semibold text-xs transition-colors shadow-sm"
+                      >
+                        Retry with Gemini Flash Latest
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedModel('gemini-3.1-flash-lite');
+                          setTimeout(() => handleExecute(), 50);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition-colors"
+                      >
+                        Retry with Gemini 3.1 Flash Lite
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             ) : executionResult ? (

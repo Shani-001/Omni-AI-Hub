@@ -67,7 +67,19 @@ export class GeminiProvider implements AIProvider {
   public async execute(params: ExecuteParams): Promise<ProviderExecutionResult> {
     const startTime = Date.now();
     const client = this.getClient();
-    const model = params.model || 'gemini-3.8-flash';
+    const requestedModel = params.model || 'gemini-flash-latest';
+
+    // Build fallback candidate chain if the requested model encounters high demand (503/429)
+    const candidateModels: string[] = [requestedModel];
+    if (requestedModel !== 'gemini-flash-latest') {
+      candidateModels.push('gemini-flash-latest');
+    }
+    if (requestedModel !== 'gemini-3.1-flash-lite') {
+      candidateModels.push('gemini-3.1-flash-lite');
+    }
+    if (requestedModel !== 'gemini-3.8-flash' && !candidateModels.includes('gemini-3.8-flash')) {
+      candidateModels.push('gemini-3.8-flash');
+    }
 
     // Prepare contents array
     const parts: any[] = [];
@@ -106,62 +118,91 @@ export class GeminiProvider implements AIProvider {
       config.maxOutputTokens = params.maxTokens;
     }
 
-    // Pass responseSchema if provided and valid
-    if (params.jsonSchema && typeof params.jsonSchema === 'object') {
+    let lastError: any = null;
+
+    // Attempt generation with requested model, automatically falling back if 503 high demand occurs
+    for (let i = 0; i < candidateModels.length; i++) {
+      const currentModel = candidateModels[i];
       try {
-        // Gemini supports responseSchema in standard openAPI subset schema
-        // We supply system instruction to reinforce JSON structure
-      } catch (err) {
-        // Silently fallback to prompt-based JSON enforcement
-      }
-    }
+        const response = await client.models.generateContent({
+          model: currentModel,
+          contents: parts.length === 1 && parts[0].text ? parts[0].text : { parts },
+          config,
+        });
 
-    try {
-      const response = await client.models.generateContent({
-        model,
-        contents: parts.length === 1 && parts[0].text ? parts[0].text : { parts },
-        config,
-      });
+        const latencyMs = Date.now() - startTime;
+        const rawText = response.text || '{}';
 
-      const latencyMs = Date.now() - startTime;
-      const rawText = response.text || '{}';
+        // Parse structured JSON output
+        let parsedOutput: any;
+        try {
+          parsedOutput = JSON.parse(rawText.trim());
+        } catch (parseErr) {
+          // Attempt clean extraction if enclosed in markdown code fences
+          const match = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+          if (match) {
+            parsedOutput = JSON.parse(match[1].trim());
+          } else {
+            throw new Error(`Failed to parse AI provider JSON response: ${(parseErr as Error).message}`);
+          }
+        }
 
-      // Parse structured JSON output
-      let parsedOutput: any;
-      try {
-        parsedOutput = JSON.parse(rawText.trim());
-      } catch (parseErr) {
-        // Attempt clean extraction if enclosed in markdown code fences
-        const match = rawText.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-        if (match) {
-          parsedOutput = JSON.parse(match[1].trim());
-        } else {
-          throw new Error(`Failed to parse AI provider JSON response: ${(parseErr as Error).message}`);
+        const inputTokens = response.usageMetadata?.promptTokenCount || 0;
+        const outputTokens = response.usageMetadata?.candidatesTokenCount || 0;
+        const totalTokens = response.usageMetadata?.totalTokenCount || inputTokens + outputTokens;
+
+        // Approximate cost for Gemini Flash (~$0.075 / 1M input tokens, ~$0.30 / 1M output tokens)
+        const estimatedCost = (inputTokens * 0.000075 + outputTokens * 0.0003) / 1000;
+
+        return {
+          rawOutput: rawText,
+          parsedOutput,
+          inputTokens,
+          outputTokens,
+          totalTokens,
+          latencyMs,
+          estimatedCost: Math.round(estimatedCost * 100000) / 100000,
+          provider: this.id,
+          model: currentModel,
+        };
+      } catch (error: any) {
+        lastError = error;
+        const errMsg = error?.message || String(error);
+        const isHighDemand =
+          errMsg.includes('503') ||
+          errMsg.includes('high demand') ||
+          errMsg.includes('UNAVAILABLE') ||
+          errMsg.includes('spikes in demand') ||
+          errMsg.includes('429');
+
+        if (isHighDemand && i < candidateModels.length - 1) {
+          console.warn(
+            `[GeminiProvider] Model "${currentModel}" encountered high demand (${errMsg}). Automatically falling back to "${candidateModels[i + 1]}"...`
+          );
+          // Wait 1200ms before trying the next model
+          await new Promise((resolve) => setTimeout(resolve, 1200));
+          continue;
+        }
+
+        // If not a transient error, break early and throw
+        if (!isHighDemand) {
+          throw new Error(`[GeminiProvider Error] ${errMsg}`);
         }
       }
-
-      const inputTokens = response.usageMetadata?.promptTokenCount || 0;
-      const outputTokens = response.usageMetadata?.candidatesTokenCount || 0;
-      const totalTokens = response.usageMetadata?.totalTokenCount || inputTokens + outputTokens;
-
-      // Approximate cost for Gemini Flash (~$0.075 / 1M input tokens, ~$0.30 / 1M output tokens)
-      const estimatedCost = (inputTokens * 0.000075 + outputTokens * 0.0003) / 1000;
-
-      return {
-        rawOutput: rawText,
-        parsedOutput,
-        inputTokens,
-        outputTokens,
-        totalTokens,
-        latencyMs,
-        estimatedCost: Math.round(estimatedCost * 100000) / 100000,
-        provider: this.id,
-        model,
-      };
-    } catch (error: any) {
-      // Clean up error message
-      const msg = error?.message || 'Gemini API call failed';
-      throw new Error(`[GeminiProvider Error] ${msg}`);
     }
+
+    // If all candidate models were exhausted
+    const finalMsg = lastError?.message || 'Gemini API call failed';
+    if (
+      finalMsg.includes('503') ||
+      finalMsg.includes('high demand') ||
+      finalMsg.includes('UNAVAILABLE')
+    ) {
+      throw new Error(
+        `[GeminiProvider 503] The Gemini model service is currently experiencing a temporary traffic spike. Automated retry across fallback models (${candidateModels.join(', ')}) was attempted. Please retry in 10-15 seconds.`
+      );
+    }
+
+    throw new Error(`[GeminiProvider Error] ${finalMsg}`);
   }
 }

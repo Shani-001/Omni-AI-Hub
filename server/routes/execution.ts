@@ -167,6 +167,11 @@ async function handleConnectorExecution(req: Request, res: Response, isDirectSlu
   try {
     const provider = providerRegistry.getProvider(connector.provider);
 
+    const effectiveModel =
+      (req.headers['x-model-override'] as string) ||
+      (req.body?.__modelOverride as string) ||
+      connector.model;
+
     let providerResult;
     let attempts = 0;
     const maxAttempts = 2;
@@ -175,7 +180,7 @@ async function handleConnectorExecution(req: Request, res: Response, isDirectSlu
       try {
         attempts++;
         providerResult = await provider.execute({
-          model: connector.model,
+          model: effectiveModel,
           systemPrompt: systemInstruction,
           userPrompt,
           temperature: connector.temperature,
@@ -214,7 +219,7 @@ async function handleConnectorExecution(req: Request, res: Response, isDirectSlu
       success: true,
       responseTimeMs: latency,
       provider: connector.provider,
-      model: connector.model,
+      model: providerResult.model || effectiveModel,
       inputTokens: providerResult.inputTokens,
       outputTokens: providerResult.outputTokens,
       totalTokens: providerResult.totalTokens,
@@ -242,7 +247,7 @@ async function handleConnectorExecution(req: Request, res: Response, isDirectSlu
         connector: connector.name,
         slug: connector.slug,
         provider: connector.provider,
-        model: connector.model,
+        model: providerResult.model || effectiveModel,
         latencyMs: latency,
         tokens: {
           input: providerResult.inputTokens,
@@ -265,6 +270,14 @@ async function handleConnectorExecution(req: Request, res: Response, isDirectSlu
     } else if (errorMessage.includes('Rate limit') || errorMessage.includes('429')) {
       errorCode = 'RATE_LIMIT_EXCEEDED';
       statusCode = 429;
+    } else if (
+      errorMessage.includes('503') ||
+      errorMessage.includes('high demand') ||
+      errorMessage.includes('UNAVAILABLE') ||
+      errorMessage.includes('spikes in demand')
+    ) {
+      errorCode = 'UPSTREAM_HIGH_DEMAND';
+      statusCode = 503;
     } else if (errorMessage.includes('not configured')) {
       errorCode = 'PROVIDER_NOT_CONFIGURED';
       statusCode = 503;

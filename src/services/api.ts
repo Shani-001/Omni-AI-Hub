@@ -152,7 +152,8 @@ export const api = {
   async testConnector(
     connectorIdOrSlug: string,
     payload: FormData | Record<string, any>,
-    apiKey?: string
+    apiKey?: string,
+    modelOverride?: string
   ): Promise<any> {
     const isFormData = payload instanceof FormData;
     const headers: Record<string, string> = {};
@@ -161,6 +162,10 @@ export const api = {
       headers['Authorization'] = `Bearer ${apiKey.trim()}`;
     } else {
       headers['x-admin-playground'] = 'true';
+    }
+
+    if (modelOverride) {
+      headers['x-model-override'] = modelOverride;
     }
 
     const options: RequestInit = {
